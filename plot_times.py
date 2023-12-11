@@ -218,11 +218,150 @@ def plot_Nbins():
 	return 
 
 
+def plot_Anton_rows():
+	fname = 'histogram_plots/Anton_Nrows_vs_times.pdf'
 
+	fs = 14
 
+	data  = Table.read('histogram_outputs/tab_Anton_Nrows_vs_time.txt', format='ascii')
 
+	for j,ax in enumerate(axlist):
+	    if j == 0:
+	        #ax.set_title( r'$(-) N_{\rm data}=10^5~|~(--) N_{\rm threads}=1024$', loc='left' )
+	        
+	        #ax.set_xlim( [1, 7])
+	        #ax.xaxis.set_minor_locator(   mplp['loc']( 0.25 )   )
+	        #ax.xaxis.set_major_locator(   mplp['loc']( 2.00 )  ) 
+	        #ax.xaxis.set_major_formatter( mplp['for']('%d')   )
+	        ax.set_xlabel( r'$ \log_{10} N_{\rm rows} $', fontsize = fs)
+	        ax.set_xscale('log')
 
+	        # y-axis properties 
+	        ax.set_ylim( [ pow(10,3), pow(10,5) ] )
+	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
+	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
+	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
+	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
+	        ax.set_yscale('log')
 
+	        # Plot all
+	        ax.errorbar( pow(10,data['N_rows']), data['tau_mean'], yerr=data['tau_stdev'], color='black',marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+
+	        ax.legend(loc=0, prop={'size':10}, ncol=1, frameon=False, numpoints=1)
+
+	pl.savefig( fname )
+	pl.clf()
+	pl.close()
+
+	return 
+
+def plot_Anton_cols():
+	fname = 'histogram_plots/Anton_Ncols_vs_times.pdf'
+
+	fs = 14
+
+	data  = Table.read('histogram_outputs/tab_Anton_Ncols_vs_time.txt', format='ascii')
+
+	for j,ax in enumerate(axlist):
+	    if j == 0:
+	        #ax.set_title( r'$(-) N_{\rm data}=10^5~|~(--) N_{\rm threads}=1024$', loc='left' )
+	        
+	        ax.set_xlim( [0, 1100])
+	        ax.xaxis.set_minor_locator(   mplp['loc']( 25 )   )
+	        ax.xaxis.set_major_locator(   mplp['loc']( 200 )  ) 
+	        ax.xaxis.set_major_formatter( mplp['for']('%d')   )
+	        ax.set_xlabel( r'$ N_{\rm cols} $', fontsize = fs)
+
+	        # y-axis properties 
+	        ax.set_ylim( [ pow(10,4), pow(10,6) ] )
+	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
+	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
+	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
+	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
+	        ax.set_yscale('log')
+
+	        # Plot all
+	        ax.errorbar( data['N_cols'], data['tau_mean'], yerr=data['tau_stdev'], color='black',marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+
+	        ax.legend(loc=0, prop={'size':10}, ncol=1, frameon=False, numpoints=1)
+
+	pl.savefig( fname )
+	pl.clf()
+	pl.close()
+
+	return 
+
+def plot_Anton_bins():
+	fname = 'histogram_plots/Anton_Nmaxbins_vs_times.pdf'
+
+	fs = 14
+
+	data  = Table.read('histogram_outputs/tab_Anton_Nmaxbins_vs_time.txt', format='ascii')
+
+	for j,ax in enumerate(axlist):
+	    if j == 0:
+	        #ax.set_title( r'$(-) N_{\rm data}=10^5~|~(--) N_{\rm threads}=1024$', loc='left' )
+	        
+	        ax.set_xlim( [0, 260])
+	        ax.xaxis.set_minor_locator(   mplp['loc']( 2  )   )
+	        ax.xaxis.set_major_locator(   mplp['loc']( 16 )   ) 
+	        ax.xaxis.set_major_formatter( mplp['for']('%d')   )
+	        ax.set_xlabel( r'$ N_{\rm bins} $', fontsize = fs)
+
+	        # y-axis properties 
+	        ax.set_ylim( [ pow(10,4), pow(10,5) ] )
+	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
+	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
+	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
+	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
+	        ax.set_yscale('log')
+
+	        # Plot all
+	        ax.errorbar( data['N_mbins'], data['tau_mean'], yerr=data['tau_stdev'], color='black',marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+
+	        ax.legend(loc=0, prop={'size':10}, ncol=1, frameon=False, numpoints=1)
+
+	pl.savefig( fname )
+	pl.clf()
+	pl.close()
+
+	return 
+
+def plot_Anton_nodes():
+	fname = 'histogram_plots/Anton_Nnodes_vs_times.pdf'
+
+	fs = 14
+
+	data  = Table.read('histogram_outputs/tab_Anton_Nnodes_vs_time.txt', format='ascii')
+
+	for j,ax in enumerate(axlist):
+	    if j == 0:
+	        #ax.set_title( r'$(-) N_{\rm data}=10^5~|~(--) N_{\rm threads}=1024$', loc='left' )
+	        
+	        ax.set_xlim( [0, 260])
+	        ax.xaxis.set_minor_locator(   mplp['loc']( 2  )   )
+	        ax.xaxis.set_major_locator(   mplp['loc']( 16 )   ) 
+	        ax.xaxis.set_major_formatter( mplp['for']('%d')   )
+	        ax.set_xlabel( r'$ N_{\rm nodes} $', fontsize = fs)
+
+	        # y-axis properties 
+	        ax.set_ylim( [ pow(10,4), pow(10,6) ] )
+	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
+	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
+	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
+	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
+	        ax.set_yscale('log')
+
+	        # Plot all
+	        ax.errorbar( data['N_nodes'], data['tau_mean'], yerr=data['tau_stdev'], color='black',marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+
+	        ax.legend(loc=0, prop={'size':10}, ncol=1, frameon=False, numpoints=1)
+
+	pl.savefig( fname )
+	pl.clf()
+	pl.close()
+
+	return 
 
 
 
