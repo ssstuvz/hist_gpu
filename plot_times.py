@@ -79,6 +79,16 @@ def func_get_plot_params( xsize, ysize, nrows, ncols, ls=10, way='out', noframe=
 pl.style.use('plot_default.mplstyle')
 figure, grid, axlist = func_get_plot_params( xsize=6, ysize=4, nrows=1, ncols=1 ) 
 
+mplp = {}
+mplp['for_0']  = mpl.ticker.NullFormatter()
+mplp['loc_0']  = mpl.ticker.NullLocator()
+
+mplp['loc']    = mpl.ticker.MultipleLocator
+mplp['for']    = mpl.ticker.FormatStrFormatter
+
+
+
+
 def plot_Ndata():
 	fname = 'histogram_plots/n_data_vs_times.pdf'
 
@@ -92,17 +102,17 @@ def plot_Ndata():
 	        ax.set_title( r'$ N_{\rm threads}=1024 $', loc='left' )
 	        
 	        #ax.set_xlim( [0, pow(10,6)])
-	        #ax.xaxis.set_minor_locator(   setup.mplp['loc'](500)  )
-	        #ax.xaxis.set_major_locator(   setup.mplp['loc']( pow(10,3) )  ) 
-	        #ax.xaxis.set_major_formatter( setup.mplp['for']('%d') )
+	        #ax.xaxis.set_minor_locator(   mplp['loc'](500)  )
+	        #ax.xaxis.set_major_locator(   mplp['loc']( pow(10,3) )  ) 
+	        #ax.xaxis.set_major_formatter( mplp['for']('%d') )
 	        ax.set_xlabel( r'$ N_{\rm data} $', fontsize = fs)
 	        ax.set_xscale('log')
 
 	        # y-axis properties 
 	        ax.set_ylim( [pow(10,1), pow(10,4) ] )
-	        #ax.yaxis.set_minor_locator(   setup.mplp['loc'](50) )
-	        #ax.yaxis.set_major_locator(   setup.mplp['loc'](250) )
-	        #ax.yaxis.set_major_formatter( setup.mplp['for']('%.1f') )  
+	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
+	        #ax.yaxis.set_major_locator(   mplp['loc'](250) )
+	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
 	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ {\rm ms} \right] $', fontsize = fs)
 	        ax.set_yscale('log')
 
@@ -136,16 +146,16 @@ def plot_Nthreads():
 	        ax.set_title( r'$(-) N_{\rm data}=10^5~|~N_{\rm bins}=10$', loc='left' )
 	        
 	        ax.set_xlim( [0, 1024])
-	        ax.xaxis.set_minor_locator(   setup.mplp['loc']( 64 )   )
-	        ax.xaxis.set_major_locator(   setup.mplp['loc']( 256 )  ) 
-	        ax.xaxis.set_major_formatter( setup.mplp['for']('%d')   )
+	        ax.xaxis.set_minor_locator(   mplp['loc']( 64 )   )
+	        ax.xaxis.set_major_locator(   mplp['loc']( 256 )  ) 
+	        ax.xaxis.set_major_formatter( mplp['for']('%d')   )
 	        ax.set_xlabel( r'$ N_{\rm threads} $', fontsize = fs)
 
 	        # y-axis properties 
 	        ax.set_ylim( [ pow(10,1), pow(10,3.5) ] )
-	        #ax.yaxis.set_minor_locator(   setup.mplp['loc'](50) )
-	        #ax.yaxis.set_major_locator(   setup.mplp['loc'](200) )
-	        #ax.yaxis.set_major_formatter( setup.mplp['for']('%.1f') )  
+	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
+	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
+	        #ax.yaxis.set_major_formatter( .mplp['for']('%.1f') )  
 	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ {\rm ms} \right] $', fontsize = fs)
 	        ax.set_yscale('log')
 
@@ -180,16 +190,16 @@ def plot_Nbins():
 	        ax.set_title( r'$(-) N_{\rm data}=10^5~|~(--) N_{\rm threads}=1024$', loc='left' )
 	        
 	        ax.set_xlim( [-5, 260])
-	        ax.xaxis.set_minor_locator(   setup.mplp['loc']( 8 )   )
-	        ax.xaxis.set_major_locator(   setup.mplp['loc']( 64 )  ) 
-	        ax.xaxis.set_major_formatter( setup.mplp['for']('%d')   )
+	        ax.xaxis.set_minor_locator(   mplp['loc']( 8 )   )
+	        ax.xaxis.set_major_locator(   mplp['loc']( 64 )  ) 
+	        ax.xaxis.set_major_formatter( mplp['for']('%d')   )
 	        ax.set_xlabel( r'$ N_{\rm bins} $', fontsize = fs)
 
 	        # y-axis properties 
 	        ax.set_ylim( [ pow(10,1), pow(10,3) ] )
-	        #ax.yaxis.set_minor_locator(   setup.mplp['loc'](50) )
-	        #ax.yaxis.set_major_locator(   setup.mplp['loc'](200) )
-	        #ax.yaxis.set_major_formatter( setup.mplp['for']('%.1f') )  
+	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
+	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
+	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
 	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ {\rm ms} \right] $', fontsize = fs)
 	        ax.set_yscale('log')
 
