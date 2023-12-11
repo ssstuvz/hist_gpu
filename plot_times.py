@@ -4,13 +4,83 @@ import matplotlib.pyplot as pl
 import matplotlib.transforms as transforms
 
 from astropy.table import Table 
-from cobra.plot    import setup
-from   cobra.utils   import dataset_io
+
+
+def func_get_plot_params( xsize, ysize, nrows, ncols, ls=10, way='out', noframe=False, wspace=None, hspace=None, wr=None, pr=None ):
+    #########################################################################   
+    # THIS FUNCTION CREATES THE SKELETON OF THE FIGURE FOR A GIVEN SET OF   #
+    # INPUT PARAMETERS                                                      #
+    #                                                                       #
+    # INPUT:                                                                #
+    #         xsize, ysize   - x,y dimensions of the figure's canvas        #
+    #         nrows, ncols   - number of rows and columns that define the   #
+    #                          corresponding number of subplots in figure   #
+    #         wspace, hspace - horizontal and vertical space between        #
+    #                          the subplots                                 #
+    #                                                                       #
+    # OUTPUT:                                                               #
+    #         figure, grid, axlist - figure props and the list of subplots  #
+    ######################################################################### 
+
+    pl.clf()
+    pl.close()
+
+    figure   = pl.figure( figsize=(xsize,ysize) )
+    if wr == None:
+        grid = mpl.gridspec.GridSpec(figure=figure, nrows=nrows, ncols=ncols )
+    else:
+        grid = mpl.gridspec.GridSpec(figure=figure, nrows=nrows, ncols=ncols, width_ratios=wr )
+
+    if noframe == True:
+        if nrows == 2:
+            nf_list = [1]
+        if nrows == 3:
+            nf_list = [1,2,5]
+        if nrows == 4:
+            nf_list = [1,2,3,6,7,11]
+
+    axlist = []
+    n = 0
+    for i in range(nrows):
+        for j in range(ncols):
+            frame = True
+            if noframe == True:
+	            if n in nf_list:
+	                frame = False
+            axlist.append( pl.subplot( grid[i,j], frameon=frame, projection=pr ) )
+            n += 1
+
+    grid.update( wspace=wspace, hspace=hspace )
+
+
+    j = 0
+    for ax in axlist:
+        ax.tick_params( 'both', length=4, width=1, which='major', labelsize=ls, direction=way )
+        ax.tick_params( 'both', length=2, width=1, which='minor', labelsize=ls, direction=way )
+        if noframe == True:
+            if j in nf_list:
+                # x-axis
+                ax.xaxis.set_major_formatter( mplp['for_0'] )
+                ax.xaxis.set_minor_locator(   mplp['loc_0'] )
+                ax.xaxis.set_major_locator(   mplp['loc_0'] )  
+                # y-axis
+                ax.yaxis.set_major_formatter( mplp['for_0'] )
+                ax.yaxis.set_minor_locator(   mplp['loc_0'] )
+                ax.yaxis.set_major_locator(   mplp['loc_0'] ) 
+        j += 1 
+
+
+    if noframe == False:
+        return figure, grid, axlist
+    else:
+        return figure, grid, axlist, nf_list
+
+
+pl.style.use('plot_default.mplstyle')
+figure, grid, axlist = func_get_plot_params( xsize=6, ysize=4, nrows=1, ncols=1 ) 
 
 def plot_Ndata():
 	fname = 'histogram_plots/n_data_vs_times.pdf'
-	pl.style.use('{}/plot/cobra_default.mplstyle'.format(dataset_io.gpaths['cobra_root']))
-	figure, grid, axlist = setup.func_get_plot_params( xsize=6, ysize=4, nrows=1, ncols=1 ) 
 
 	fs = 14
 
@@ -53,8 +123,6 @@ def plot_Ndata():
 
 def plot_Nthreads():
 	fname = 'histogram_plots/n_threads_vs_times.pdf'
-	pl.style.use('{}/plot/cobra_default.mplstyle'.format(dataset_io.gpaths['cobra_root']))
-	figure, grid, axlist = setup.func_get_plot_params( xsize=6, ysize=4, nrows=1, ncols=1 ) 
 
 	fs = 14
 
@@ -102,8 +170,6 @@ def plot_Nthreads():
 
 def plot_Nbins():
 	fname = 'histogram_plots/n_bins_vs_times.pdf'
-	pl.style.use('{}/plot/cobra_default.mplstyle'.format(dataset_io.gpaths['cobra_root']))
-	figure, grid, axlist = setup.func_get_plot_params( xsize=6, ysize=4, nrows=1, ncols=1 ) 
 
 	fs = 14
 
