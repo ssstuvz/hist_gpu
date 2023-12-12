@@ -233,7 +233,7 @@ def plot_Anton_rows():
 	        #ax.xaxis.set_minor_locator(   mplp['loc']( 0.25 )   )
 	        #ax.xaxis.set_major_locator(   mplp['loc']( 2.00 )  ) 
 	        #ax.xaxis.set_major_formatter( mplp['for']('%d')   )
-	        ax.set_xlabel( r'$ \log_{10} N_{\rm rows} $', fontsize = fs)
+	        ax.set_xlabel( r'$ N_{\rm rows} $', fontsize = fs)
 	        ax.set_xscale('log')
 
 	        # y-axis properties 
