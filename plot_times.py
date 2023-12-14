@@ -219,35 +219,60 @@ def plot_Nbins():
 
 
 def plot_Anton_rows():
-	fname = 'histogram_plots/Anton_Nrows_vs_times.pdf'
+	fname = 'histogram_plots/compare/Anton_Nrows_vs_times_compare_2GPU.pdf'
 
 	fs = 14
 
 	data  = Table.read('histogram_outputs/tab_Anton_Nrows_vs_time.txt', format='ascii')
 
+
+	x1, x2, y1, y2 = pow(10,4.5), pow(10,7.01), -0.5, 15  # subregion of the original image
+
+
 	for j,ax in enumerate(axlist):
 	    if j == 0:
 	        #ax.set_title( r'$(-) N_{\rm data}=10^5~|~(--) N_{\rm threads}=1024$', loc='left' )
 	        
-	        #ax.set_xlim( [1, 7])
+	        #ax.set_xlim( [pow(10,5), pow(10,6)])
 	        #ax.xaxis.set_minor_locator(   mplp['loc']( 0.25 )   )
 	        #ax.xaxis.set_major_locator(   mplp['loc']( 2.00 )  ) 
 	        #ax.xaxis.set_major_formatter( mplp['for']('%d')   )
 	        ax.set_xlabel( r'$ N_{\rm rows} $', fontsize = fs)
-	        ax.set_xscale('log')
+	       	ax.set_xscale('log')
 
 	        # y-axis properties 
-	        ax.set_ylim( [ pow(10,3), pow(10,5) ] )
-	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
-	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
-	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
-	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
+	        #ax.set_ylim( [ 0, 100 ] )
+	        #ax.yaxis.set_minor_locator(   mplp['loc'](2) )
+	        #ax.yaxis.set_major_locator(   mplp['loc'](10) )
+	        #ax.yaxis.set_major_formatter( mplp['for']('%d') )  
+	        #ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
+	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ m{\rm s} \right] $', fontsize = fs)
+	        #ax.set_ylabel( r'$ \frac{\Delta \tau_{\rm GPU}}{\tau_{\rm GPU}\left[{\rm PyBoost}\right]}~\left[ \mu{\rm s} \right] $', fontsize = fs)
 	        ax.set_yscale('log')
 
 	        # Plot all
-	        ax.errorbar( pow(10,data['N_rows']), data['tau_mean'], yerr=data['tau_stdev'], color='black',marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+	        #ax.plot( pow(10,data['N_rows']), 1-data['tau_mean_ser']/data['tau_mean_elw'], color='black', marker='o', ms=4, label=r'${\rm PyBoost}$' )
+	        ax.errorbar( pow(10,data['N_rows']), data['tau_mean_elw']/1000,  yerr=data['tau_stdev_elw']/1000,  color='black',      marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+	        ax.errorbar( pow(10,data['N_rows']), data['tau_mean_ser']/1000,  yerr=data['tau_stdev_ser']/1000,  color='red',        marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm updated\ kernel}$'  )
+	        ax.errorbar( pow(10,data['N_rows']), data['tau_mean_ser2']/1000, yerr=data['tau_stdev_ser2']/1000, color='DodgerBlue', marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm updated\ kernel|~2\ GPU}$'  )
 
-	        ax.legend(loc=0, prop={'size':10}, ncol=1, frameon=False, numpoints=1)
+	        
+	        axins = ax.inset_axes( [0.12, 0.57, 0.4, 0.4], xlim=(x1,x2), ylim=(y1, y2), xticklabels=[], yticklabels=[])
+	        axins.set_xscale('log')
+
+	        axins.tick_params( 'both', length=4, width=1, which='major', labelsize=10, direction='inout' )
+	        axins.tick_params( 'both', length=2, width=1, which='minor', labelsize=10, direction='inout' )
+
+	        axins.yaxis.set_minor_locator(   mplp['loc'](1) )
+	        axins.yaxis.set_major_locator(   mplp['loc'](5) )
+	        axins.yaxis.set_major_formatter( mplp['for']('%d') ) 
+	        axins.set_ylabel( r'$ {\rm speed\ up} \left[\% \right] $', fontsize = 10) 
+	        axins.set_xlabel( r'$ N_{\rm rows} $', fontsize = 10)
+
+	        axins.plot( pow(10,data['N_rows']), 100*(1-data['tau_mean_ser']/data['tau_mean_elw']),  color='red'        )
+	        axins.plot( pow(10,data['N_rows']), 100*(1-data['tau_mean_ser2']/data['tau_mean_elw']), color='DodgerBlue' )
+
+	        ax.legend(loc=(0.60,0.02), prop={'size':10}, ncol=1, frameon=False, numpoints=1)
 
 	pl.savefig( fname )
 	pl.clf()
@@ -256,7 +281,7 @@ def plot_Anton_rows():
 	return 
 
 def plot_Anton_cols():
-	fname = 'histogram_plots/Anton_Ncols_vs_times.pdf'
+	fname = 'histogram_plots/compare/Anton_Ncols_vs_times_compare_2GPU.pdf'
 
 	fs = 14
 
@@ -273,17 +298,43 @@ def plot_Anton_cols():
 	        ax.set_xlabel( r'$ N_{\rm cols} $', fontsize = fs)
 
 	        # y-axis properties 
-	        ax.set_ylim( [ pow(10,4), pow(10,6) ] )
-	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
-	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
-	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
-	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
-	        ax.set_yscale('log')
+	        ax.set_ylim( [ 0, 800 ] )
+	        ax.yaxis.set_minor_locator(   mplp['loc'](25) )
+	        ax.yaxis.set_major_locator(   mplp['loc'](100) )
+	        ax.yaxis.set_major_formatter( mplp['for']('%d') )  
+	        #ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
+	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ m{\rm s} \right] $', fontsize = fs)
+	        #ax.set_yscale('log')
 
 	        # Plot all
-	        ax.errorbar( data['N_cols'], data['tau_mean'], yerr=data['tau_stdev'], color='black',marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+	        ax.errorbar( data['N_cols'], data['tau_mean_elw']/1000,  yerr=data['tau_stdev_elw']/1000,  color='black',      marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+	        ax.errorbar( data['N_cols'], data['tau_mean_ser']/1000,  yerr=data['tau_stdev_ser']/1000,  color='red',        marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm updated\ kernel}$'  )
+	        ax.errorbar( data['N_cols'], data['tau_mean_ser2']/1000, yerr=data['tau_stdev_ser2']/1000, color='DodgerBlue', marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm updated\ kernel|~2\ GPU}$'  )
 
-	        ax.legend(loc=0, prop={'size':10}, ncol=1, frameon=False, numpoints=1)
+	        x1, x2, y1, y2 = 0, 1100, -0.5, 25  # subregion of the original image
+	        axins = ax.inset_axes( [0.12, 0.57, 0.4, 0.4], xlim=(x1,x2), ylim=(y1, y2), xticklabels=[], yticklabels=[])
+
+	        axins.tick_params( 'both', length=4, width=1, which='major', labelsize=10, direction='inout' )
+	        axins.tick_params( 'both', length=2, width=1, which='minor', labelsize=10, direction='inout' )
+
+	        # x-axis
+	        axins.xaxis.set_minor_locator(   mplp['loc'](25) )
+	        axins.xaxis.set_major_locator(   mplp['loc'](200) )
+	        axins.xaxis.set_major_formatter( mplp['for']('%d') ) 
+	        axins.set_xlabel( r'$ N_{\rm cols} $', fontsize = 10)
+
+	        # y-axis
+	        axins.yaxis.set_minor_locator(   mplp['loc'](1) )
+	        axins.yaxis.set_major_locator(   mplp['loc'](5) )
+	        axins.yaxis.set_major_formatter( mplp['for']('%d') ) 
+	        axins.set_ylabel( r'$ {\rm speed\ up} \left[\% \right] $', fontsize = 10) 
+
+	        axins.plot( data['N_cols'], 100*(1-data['tau_mean_ser']/data['tau_mean_elw']),  color='red' )
+	        axins.plot( data['N_cols'], 100*(1-data['tau_mean_ser2']/data['tau_mean_elw']), color='DodgerBlue' )
+
+
+
+	        ax.legend(loc=(0.6,0.05), prop={'size':10}, ncol=1, frameon=False, numpoints=1)
 
 	pl.savefig( fname )
 	pl.clf()
@@ -292,7 +343,7 @@ def plot_Anton_cols():
 	return 
 
 def plot_Anton_bins():
-	fname = 'histogram_plots/Anton_Nmaxbins_vs_times.pdf'
+	fname = 'histogram_plots/compare/Anton_Nmaxbins_vs_times_compare_2GPU.pdf'
 
 	fs = 14
 
@@ -309,17 +360,43 @@ def plot_Anton_bins():
 	        ax.set_xlabel( r'$ N_{\rm bins} $', fontsize = fs)
 
 	        # y-axis properties 
-	        ax.set_ylim( [ pow(10,4), pow(10,5) ] )
-	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
-	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
-	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
-	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
-	        ax.set_yscale('log')
+	        ax.set_ylim( [ 0, 60 ] )
+	        ax.yaxis.set_minor_locator(   mplp['loc'](2) )
+	        ax.yaxis.set_major_locator(   mplp['loc'](10) )
+	        ax.yaxis.set_major_formatter( mplp['for']('%d') )  
+	        #ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
+	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ m{\rm s} \right] $', fontsize = fs)
+	        #ax.set_yscale('log')
 
 	        # Plot all
-	        ax.errorbar( data['N_mbins'], data['tau_mean'], yerr=data['tau_stdev'], color='black',marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+	        ax.errorbar( data['N_mbins'], data['tau_mean_elw']/1000,  yerr=data['tau_stdev_elw']/1000,  color='black',      marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+	        ax.errorbar( data['N_mbins'], data['tau_mean_ser']/1000,  yerr=data['tau_stdev_ser']/1000,  color='red',        marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm updated\ kernel}$'  )
+	        ax.errorbar( data['N_mbins'], data['tau_mean_ser2']/1000, yerr=data['tau_stdev_ser2']/1000, color='DodgerBlue', marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm updated\ kernel|~2\ GPU}$'  )
 
-	        ax.legend(loc=0, prop={'size':10}, ncol=1, frameon=False, numpoints=1)
+
+	        x1, x2, y1, y2 = 0, 260, -0.5, 15  # subregion of the original image
+	        axins = ax.inset_axes( [0.1, 0.15, 0.4, 0.4], xlim=(x1,x2), ylim=(y1, y2), xticklabels=[], yticklabels=[])
+
+	        axins.tick_params( 'both', length=4, width=1, which='major', labelsize=10, direction='inout' )
+	        axins.tick_params( 'both', length=2, width=1, which='minor', labelsize=10, direction='inout' )
+
+	        # x-axis
+	        axins.xaxis.set_minor_locator(   mplp['loc'](8) )
+	        axins.xaxis.set_major_locator(   mplp['loc'](32) )
+	        axins.xaxis.set_major_formatter( mplp['for']('%d') ) 
+	        axins.set_xlabel( r'$ N_{\rm bins} $', fontsize = 10)
+
+	        # y-axis
+	        axins.yaxis.set_minor_locator(   mplp['loc'](1) )
+	        axins.yaxis.set_major_locator(   mplp['loc'](5) )
+	        axins.yaxis.set_major_formatter( mplp['for']('%d') ) 
+	        axins.set_ylabel( r'$ {\rm speed\ up} \left[\% \right] $', fontsize = 10) 
+
+	        axins.plot( data['N_mbins'], 100*(1-data['tau_mean_ser']/data['tau_mean_elw']),  color='red' )
+	        axins.plot( data['N_mbins'], 100*(1-data['tau_mean_ser2']/data['tau_mean_elw']), color='DodgerBlue' )
+
+
+	        ax.legend(loc=(0.6,0.05), prop={'size':10}, ncol=1, frameon=False, numpoints=1)
 
 	pl.savefig( fname )
 	pl.clf()
@@ -328,7 +405,7 @@ def plot_Anton_bins():
 	return 
 
 def plot_Anton_nodes():
-	fname = 'histogram_plots/Anton_Nnodes_vs_times.pdf'
+	fname = 'histogram_plots/compare/Anton_Nnodes_vs_times_2GPU.pdf'
 
 	fs = 14
 
@@ -345,17 +422,41 @@ def plot_Anton_nodes():
 	        ax.set_xlabel( r'$ N_{\rm nodes} $', fontsize = fs)
 
 	        # y-axis properties 
-	        ax.set_ylim( [ pow(10,4), pow(10,6) ] )
-	        #ax.yaxis.set_minor_locator(   mplp['loc'](50) )
-	        #ax.yaxis.set_major_locator(   mplp['loc'](200) )
-	        #ax.yaxis.set_major_formatter( mplp['for']('%.1f') )  
-	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ \mu{\rm s} \right] $', fontsize = fs)
-	        ax.set_yscale('log')
+	        ax.set_ylim( [ 0, 250 ] )
+	        ax.yaxis.set_minor_locator(   mplp['loc'](5) )
+	        ax.yaxis.set_major_locator(   mplp['loc'](20) )
+	        ax.yaxis.set_major_formatter( mplp['for']('%d') )  
+	        ax.set_ylabel( r'$ \tau_{\rm GPU}~\left[ m{\rm s} \right] $', fontsize = fs)
+	        #ax.set_yscale('log')
 
 	        # Plot all
-	        ax.errorbar( data['N_nodes'], data['tau_mean'], yerr=data['tau_stdev'], color='black',marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+	        ax.errorbar( data['N_nodes'], data['tau_mean_elw']/1000,  yerr=data['tau_stdev_elw']/1000,  color='black',      marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm PyBoost}$'  )
+	        ax.errorbar( data['N_nodes'], data['tau_mean_ser']/1000,  yerr=data['tau_stdev_ser']/1000,  color='red',        marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm updated\ kernel}$'  )
+	        ax.errorbar( data['N_nodes'], data['tau_mean_ser2']/1000, yerr=data['tau_stdev_ser2']/1000, color='DodgerBlue', marker='o', ms=4, capsize=0, elinewidth=1, label=r'${\rm updated\ kernel|~2\ GPU}$'  )
 
-	        ax.legend(loc=0, prop={'size':10}, ncol=1, frameon=False, numpoints=1)
+	        x1, x2, y1, y2 = 0, 260, -0.5, 15  # subregion of the original image
+	        axins = ax.inset_axes( [0.12, 0.57, 0.4, 0.4], xlim=(x1,x2), ylim=(y1, y2), xticklabels=[], yticklabels=[])
+
+	        axins.tick_params( 'both', length=4, width=1, which='major', labelsize=10, direction='inout' )
+	        axins.tick_params( 'both', length=2, width=1, which='minor', labelsize=10, direction='inout' )
+
+	        # x-axis
+	        axins.xaxis.set_minor_locator(   mplp['loc'](8) )
+	        axins.xaxis.set_major_locator(   mplp['loc'](32) )
+	        axins.xaxis.set_major_formatter( mplp['for']('%d') ) 
+	        axins.set_xlabel( r'$ N_{\rm nodes} $', fontsize = 10)
+
+	        # y-axis
+	        axins.yaxis.set_minor_locator(   mplp['loc'](1) )
+	        axins.yaxis.set_major_locator(   mplp['loc'](5) )
+	        axins.yaxis.set_major_formatter( mplp['for']('%d') ) 
+	        axins.set_ylabel( r'$ {\rm speed\ up} \left[\% \right] $', fontsize = 10) 
+
+	        axins.plot( data['N_nodes'], 100*(1-data['tau_mean_ser']/data['tau_mean_elw']),  color='red' )
+	        axins.plot( data['N_nodes'], 100*(1-data['tau_mean_ser2']/data['tau_mean_elw']), color='DodgerBlue' )
+
+
+	        ax.legend(loc=(0.6,0.05), prop={'size':10}, ncol=1, frameon=False, numpoints=1)
 
 	pl.savefig( fname )
 	pl.clf()
